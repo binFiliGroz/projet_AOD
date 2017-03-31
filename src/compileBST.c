@@ -16,6 +16,42 @@
 #include <string.h>
 
 
+long pArbre(long i, long j, long *freqTab, long **pTab, long **rTab) {
+    long k, km, pm, p;
+
+    if (i > j) {
+	perror(__func__);
+	(void)fprintf(stderr, "Wrong args\n");
+    }
+
+    if (pTab[i][j] != -1)
+	return pTab[i][j];
+
+    if (i == j) {
+	pTab[i][j] = 0;
+	return 0;
+    }
+
+    pm=-1;
+    for(k=i+1; k<=j; k++) {
+	p = pArbre(i,k-1, freqTab, pTab, rTab) 
+	    + pArbre(k, j, freqTab, pTab, rTab);
+	if (pm > p || pm == -1) {
+	    km = k;
+	    pm = p;
+	}
+    }
+
+    rTab[i][j] = km;
+
+    for(k=i; k<=j; k++)
+	pm += freqTab[k];
+
+    pTab[i][j] = pm;
+
+    return pm;
+}
+
 
 /**
  * Main function
@@ -28,6 +64,9 @@
 int main (int argc, char *argv[]) {
   long n = 0 ; // Number of elements in the dictionary
   FILE *freqFile = NULL ; // File that contains n positive integers defining the relative frequence of dictinary elements 
+  long i, j;
+  long *freqTab;
+  long **pTab, **rTab;
   
   if(argc != 3){
     fprintf(stderr, "!!!!! Usage: ./compileBST n  originalFile !!!!!\n");
@@ -51,7 +90,7 @@ int main (int argc, char *argv[]) {
          if (resuLong > 0)
          {
             n = (long)resuLong;
-            fprintf(stderr, "Number of elements in the dictionary: %ld\n", n);         
+            //fprintf(stderr, "Number of elements in the dictionary: %ld\n", n);         
          }
          else
          {
@@ -82,9 +121,43 @@ int main (int argc, char *argv[]) {
   freqFile = fopen(argv[2] , "r" );
   if (freqFile==NULL) {fprintf (stderr, "!!!!! Error opening originalFile !!!!!\n"); exit(EXIT_FAILURE);}
 
-  // TO BE COMPLETED 
+  freqTab = malloc(sizeof(*freqTab)*n);
+
+  for(i=0; i<n; i++)
+      fscanf(freqFile, "%ld ", freqTab+i);
+
   fclose(freqFile);
 
+  pTab = malloc(n*sizeof(*pTab));
+  *pTab = calloc(n*n, sizeof(*pTab));
+  for(i=1; i<n; i++)
+      pTab[i] = pTab[i-1] + n;
+
+  for(i=0; i<n; i++)
+      for(j=0; j<n; j++)
+	  pTab[i][j] = -1;
+
+  rTab = malloc(n*sizeof(*rTab));
+  *rTab = calloc(n*n, sizeof(*rTab));
+  for(i=1; i<n; i++)
+      rTab[i] = rTab[i-1] + n;
+
+  printf("pArbre = %ld\n", pArbre(0, n-1, freqTab, pTab, rTab));
+  printf("Racine = %ld\n", rTab[0][n-1]);
+
+  printf("\nAffichage des profondeurs moyennes :\n");
+  for(i=0; i<n; i++) {
+      for(j=0; j<n; j++)
+	  printf(" %ld", pTab[i][j]);
+      printf("\n");
+  }
+
+  printf("\nAffichage des racines :\n");
+  for(i=0; i<n; i++) {
+      for(j=0; j<n; j++)
+	  printf(" %ld", rTab[i][j]);
+      printf("\n");
+  }
 
   return 0;
 }
