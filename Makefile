@@ -8,6 +8,8 @@ SRCDIR=$(REFDIR)/src
 BINDIR=$(REFDIR)/bin
 DOCDIR=$(REFDIR)/doc
 REPORTDIR=$(REFDIR)/rapport
+TESTSDIR=$(REFDIR)/tests
+TMPDIR=$(REFDIR)/tmp
 
 LATEXSOURCE=$(wildcard $(REPORTDIR)/*.tex)
 CSOURCE=$(wildcard $(SRCDIR)/compileBST.c)
@@ -32,8 +34,11 @@ report: $(PDF)
 
 doc: $(DOCDIR)/index.html
 
+test: 
+	$(TESTSDIR)/scripts/launch-tests.sh
+
 clean:
-	rm -rf $(DOCDIR) $(BINDIR)/* $(REPORTDIR)/*.aux $(REPORTDIR)/*.log  $(REPORTDIR)/rapport.pdf 
+	rm -rf  $(TMPDIR) $(DOCDIR) $(BINDIR)/* $(REPORTDIR)/*.aux $(REPORTDIR)/*.log  $(REPORTDIR)/rapport.pdf 
 
 
 .PHONY: all doc binary report 
