@@ -19,39 +19,42 @@
 long pArbre(long i, long j, long *freqTab, long **pTab, long **rTab) {
     long k, km, pm, p;
 
-    if (i > j) {
-	perror(__func__);
-	(void)fprintf(stderr, "Wrong args\n");
-    }
-
+    if (i > j) 
+	return 0;
+    
+    // renvoi de la valeur en mémoire si calcul déjà réalisé
     if (pTab[i][j] != -1)
 	return pTab[i][j];
 
-    if (i == j) {
-	pTab[i][j] = 0;
-	return 0;
-    }
+    if (i != j) {
+	pm = -1;
 
-    pm=-1;
-    for(k=i+1; k<=j; k++) {
-	p = pArbre(i,k-1, freqTab, pTab, rTab) 
-	    + pArbre(k, j, freqTab, pTab, rTab);
-	if (pm > p || pm == -1) {
-	    km = k;
-	    pm = p;
+	// recherche de la racine qui minimise la profondeur moyenne
+	for(k = i; k <= j; k++) {
+	    p = pArbre(i, k-1, freqTab, pTab, rTab)
+		+ pArbre(k+1, j, freqTab, pTab, rTab);
+
+	    if (pm >= p || pm == -1) {
+		km = k;
+		pm = p;
+	    }
 	}
+
+	for(k=i; k<=j; k++)
+	    pm += freqTab[k];
     }
 
+    else {
+	pm = freqTab[i];
+	km = i;
+    }
+
+    // stockage de la valeur en mémoire
     rTab[i][j] = km;
-
-    for(k=i; k<=j; k++)
-	pm += freqTab[k];
-
     pTab[i][j] = pm;
 
     return pm;
 }
-
 
 /**
  * Main function
@@ -141,10 +144,16 @@ int main (int argc, char *argv[]) {
   *rTab = calloc(n*n, sizeof(*rTab));
   for(i=1; i<n; i++)
       rTab[i] = rTab[i-1] + n;
+/*
+  printf("\nTableau des fréquences :\n");
+  for(i=0; i<n; i++)
+      printf("[%ld] %ld\n", i, freqTab[i]);
+*/
 
-  printf("pArbre = %ld\n", pArbre(0, n-1, freqTab, pTab, rTab));
-  printf("Racine = %ld\n", rTab[0][n-1]);
+  printf("static long BSTdepth = %ld; // pour info. Non demandé\n", pArbre(0, n-1, freqTab, pTab, rTab));
+  printf("static int BSTroot = %ld;\n", rTab[0][n-1]);
 
+/*
   printf("\nAffichage des profondeurs moyennes :\n");
   for(i=0; i<n; i++) {
       for(j=0; j<n; j++)
@@ -158,6 +167,7 @@ int main (int argc, char *argv[]) {
 	  printf(" %ld", rTab[i][j]);
       printf("\n");
   }
+*/
 
   return 0;
 }
