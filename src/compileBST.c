@@ -16,7 +16,7 @@
 #include <string.h>
 
 
-long pArbre(long i, long j, long *freqTab, long **pTab, long **rTab) {
+long pArbre(long i, long j, long *freqAddTab, long **pTab, long **rTab) {
     long k, km, pm, p;
 
     if (i > j) 
@@ -31,8 +31,8 @@ long pArbre(long i, long j, long *freqTab, long **pTab, long **rTab) {
 
 	// recherche de la racine qui minimise la profondeur moyenne
 	for(k = i; k <= j; k++) {
-	    p = pArbre(i, k-1, freqTab, pTab, rTab)
-		+ pArbre(k+1, j, freqTab, pTab, rTab);
+	    p = pArbre(i, k-1, freqAddTab, pTab, rTab)
+		+ pArbre(k+1, j, freqAddTab, pTab, rTab);
 
 	    if (pm >= p || pm == -1) {
 		km = k;
@@ -40,12 +40,11 @@ long pArbre(long i, long j, long *freqTab, long **pTab, long **rTab) {
 	    }
 	}
 
-	for(k=i; k<=j; k++)
-	    pm += freqTab[k];
+	pm += freqAddTab[j+1] - freqAddTab[i];
     }
 
     else {
-	pm = freqTab[i];
+	pm = freqAddTab[i+1] - freqAddTab[i];
 	km = i;
     }
 
@@ -68,7 +67,8 @@ int main (int argc, char *argv[]) {
   long n = 0 ; // Number of elements in the dictionary
   FILE *freqFile = NULL ; // File that contains n positive integers defining the relative frequence of dictinary elements 
   long i, j;
-  long *freqTab;
+  long freqSum, freqTmp;
+  long *freqAddTab;
   long **pTab, **rTab;
   
   if(argc != 3){
@@ -121,36 +121,40 @@ int main (int argc, char *argv[]) {
     if  (codeRetour != EXIT_SUCCESS) return codeRetour ;
   }
 
+  // ouverture du fichier
   freqFile = fopen(argv[2] , "r" );
   if (freqFile==NULL) {fprintf (stderr, "!!!!! Error opening originalFile !!!!!\n"); exit(EXIT_FAILURE);}
 
-  freqTab = malloc(sizeof(*freqTab)*n);
+  // lecture des fréquences 
+  // puis mise en mémoire sous forme cumulée
+  freqAddTab = malloc(sizeof(*freqAddTab)*(n+1));
+  freqAddTab[0] = 0;
+  freqSum = 0;
+  for(i=1; i<=n; i++) {
+      fscanf(freqFile, "%ld ", &freqTmp);
+      freqSum += freqTmp;
+      freqAddTab[i] = freqSum;
+  }
 
-  for(i=0; i<n; i++)
-      fscanf(freqFile, "%ld ", freqTab+i);
-
+  // fermture du fichier
   fclose(freqFile);
 
+  // allocation du tableau des profondeurs moyennes
   pTab = malloc(n*sizeof(*pTab));
   *pTab = calloc(n*n, sizeof(*pTab));
   for(i=1; i<n; i++)
       pTab[i] = pTab[i-1] + n;
-
   for(i=0; i<n; i++)
       for(j=0; j<n; j++)
 	  pTab[i][j] = -1;
 
+  // allocation du tableau des racines
   rTab = malloc(n*sizeof(*rTab));
   *rTab = calloc(n*n, sizeof(*rTab));
   for(i=1; i<n; i++)
       rTab[i] = rTab[i-1] + n;
-/*
-  printf("\nTableau des fréquences :\n");
-  for(i=0; i<n; i++)
-      printf("[%ld] %ld\n", i, freqTab[i]);
-*/
 
-  printf("static long BSTdepth = %ld; // pour info. Non demandé\n", pArbre(0, n-1, freqTab, pTab, rTab));
+  printf("static long BSTdepth = %ld; // pour info. Non demandé\n", pArbre(0, n-1, freqAddTab, pTab, rTab));
   printf("static int BSTroot = %ld;\n", rTab[0][n-1]);
 
 /*
