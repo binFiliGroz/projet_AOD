@@ -29,14 +29,12 @@ GROZ Irénée
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Principe de notre  programme (1 point)}
-{\em Mettre ici une explication brève du principe de votre programme en  précisant la méthode implantée (récursive, itérative) et les
-choix effectués (notamment pour l'ordonnancement des instructions).
-} 
 Notre programme est récursif donc l'implémentation des équations de Bellman elles-mêmes récursives a été directe.
-2 optimisations sont présentes :
+Plusieurs optimisations sont présentes :
 \begin{itemize}
 \item[\underline{précalcul de la somme des fréquences :}] pour éviter de faire une somme de fréquences à chaque appel de la fonction récursive nous avons stocké les fréquences sour forme cumulée afin de se ramener à une seule différence lors du calcul de la somme
-\item[\underline{bornes de recherche :}] au lieu de faire varier l'indice de recherche \textbf{k} du minimum sur tout l'intervalle \textbf{[i, j]}, nous avons restreint la recherche à l'intervalle [racine(i, j-1), racine(i+1, j)].
+\item[\underline{mémoïsation}] les profondeurs moyennes sont stockées dans une matrice pour éviter de refaire certains calculs intermédiaires un grand nombre de fois
+\item[\underline{bornes de recherche :}] au lieu de faire varier l'indice de recherche \textbf{k} du minimum sur tout l'intervalle \textbf{[i, j]}, nous avons restreint la recherche à l'intervalle \textbf{[racine(i, j-1), racine(i+1, j)]}.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,8 +54,8 @@ Notre programme est récursif donc l'implémentation des équations de Bellman e
       $$T(k_1, k_2) = ...  \mbox{~avec~les~conditions~initiales~....~} $$
       Le coût indiqué est obtenu en résolvant ce système par la méthode de  .... "
     } 
-  \subsection{Place mémoire requise\,: }
-    \paragraph{Justification\,: }
+  \subsection{Place mémoire requise\,: $O(n^2)$}
+    \paragraph{Justification\,: } Les allocations mémoires nécessaires sont en $O(n)$ pour le tableau des fréquences cumulées et en $O(n^2)$ pour les matrices de racines et des profondeurs.
 
   \subsection{Nombre de défauts de cache sur le modèle CO\,: }
     \paragraph{Justification\,: }
@@ -73,7 +71,9 @@ Notre programme est récursif donc l'implémentation des équations de Bellman e
 
     \subsubsection{Méthode utilisée pour les mesures de temps\,: } 
     Les tests ont été lancé par la commande "make test" qui appelle un script qui lance les benchmarks de manière séquentielle (benchmark1 puis benchmark 2 ...).
-    La commande a été utilisé 5 fois d'affilée pour les mesures.
+    La commande a été utilisé 5 fois d'affilée pour les mesures.\\
+    
+    Le temps est mesuré au sein du programme c via la fonction \emph{clock()} de \textit{time.h}.
 
   \subsection{Mesures expérimentales}
 
@@ -82,21 +82,21 @@ Notre programme est récursif donc l'implémentation des équations de Bellman e
         \begin{tabular}{|l||r||r|r|r||}
           \hline
           \hline
-            & temps     & temps   & temps \\
-            & min (s)   & max (s) & moyen (s)\\
+            & n			& temps     & temps   & temps \\
+            &			& min (s)   & max (s) & moyen (s)\\
           \hline
           \hline
-            benchmark1 & 0.000017 & 0.000021 & 0.000019 \\
+            benchmark1 & 5 & 0.000017 & 0.000021 & 0.000019 \\
           \hline
-            benchmark2 & 0.000023 & 0.000034 & 0.000027 \\
+            benchmark2 & 10 & 0.000023 & 0.000034 & 0.000027 \\
           \hline
-            benchmark3 & 0.061833 & 0.062367 & 0.062062 \\
+            benchmark3 & 1000 & 0.061833 & 0.062367 & 0.062062 \\
           \hline
-            benchmark4 & 0.285534 & 0.286234 & 0.285952 \\
+            benchmark4 & 2000 & 0.285534 & 0.286234 & 0.285952 \\
           \hline
-            benchmark5 & 0.673821 & 0.680874 & 0.676686 \\
+            benchmark5 & 3000 & 0.673821 & 0.680874 & 0.676686 \\
           \hline
-            benchmark6 & 2.008140 & 2.030586 & 2.019177 \\
+            benchmark6 & 5000 & 2.008140 & 2.030586 & 2.019177 \\
           \hline
           \hline
         \end{tabular}
@@ -109,6 +109,7 @@ Notre programme est récursif donc l'implémentation des équations de Bellman e
 {\em Donner  une réponse justifiée  à la question\,: 
               les  temps mesurés correspondent ils  à votre analyse théorique (nombre d’opérations et défauts de cache) ?
 }
+Par une régression quadratique sur les résultats expérimentaux on vérifie que le temps moyen est en $O(n^2)$.
 
 \end{document}
 %% Fin mise au format
