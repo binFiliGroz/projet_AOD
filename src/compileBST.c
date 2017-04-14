@@ -17,7 +17,7 @@
 
 
 long pArbre(long i, long j, long *freqAddTab, long **pTab, long **rTab) {
-    long k, km, pm, p;
+    long k, km, pm, p, start, end;
 
     if (i > j) 
 	return 0;
@@ -29,8 +29,18 @@ long pArbre(long i, long j, long *freqAddTab, long **pTab, long **rTab) {
     if (i != j) {
 	pm = -1;
 
+	if (rTab[i][j-1] == -1)
+	    start = i;
+	else 
+	    start = rTab[i][j-1];
+
+	if (rTab[i+1][j] == -1)
+	    end = j;
+	else
+	    end = rTab[i+1][j];
+
 	// recherche de la racine qui minimise la profondeur moyenne
-	for(k = i; k <= j; k++) {
+	for(k = start; k <= end; k++) {
 	    p = pArbre(i, k-1, freqAddTab, pTab, rTab)
 		+ pArbre(k+1, j, freqAddTab, pTab, rTab);
 
@@ -141,7 +151,7 @@ int main (int argc, char *argv[]) {
 
   // allocation du tableau des profondeurs moyennes
   pTab = malloc(n*sizeof(*pTab));
-  *pTab = calloc(n*n, sizeof(*pTab));
+  *pTab = malloc(n*n*sizeof(*pTab));
   for(i=1; i<n; i++)
       pTab[i] = pTab[i-1] + n;
   for(i=0; i<n; i++)
@@ -150,9 +160,13 @@ int main (int argc, char *argv[]) {
 
   // allocation du tableau des racines
   rTab = malloc(n*sizeof(*rTab));
-  *rTab = calloc(n*n, sizeof(*rTab));
+  *rTab = malloc(n*n*sizeof(*rTab));
   for(i=1; i<n; i++)
       rTab[i] = rTab[i-1] + n;
+  for(i=0; i<n; i++)
+      for(j=0; j<n; j++)
+	  rTab[i][j] = -1;
+
 
   printf("static long BSTdepth = %ld; // pour info. Non demandé\n", pArbre(0, n-1, freqAddTab, pTab, rTab));
   printf("static int BSTroot = %ld;\n", rTab[0][n-1]);
@@ -172,6 +186,12 @@ int main (int argc, char *argv[]) {
       printf("\n");
   }
 */
+
+  free(*pTab);
+  free(pTab);
+  free(*rTab);
+  free(rTab);
+  free(freqAddTab);
 
   return 0;
 }
