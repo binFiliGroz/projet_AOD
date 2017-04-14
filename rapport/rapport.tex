@@ -17,27 +17,27 @@
 
 \title{Rapport de TP 4MMAOD : Génération d'ABR optimal}
 \author{
-GROZ Irénée (groupe 11) 
-\\ FILIPPI Angelo (groupe 11) 
+GROZ Irénée 
+\\FILIPPI Angelo 
+\\(groupe 11) 
 }
 
 \begin{document}
 
 \maketitle
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{\em Préambule}
-{\em \begin{itemize} 
-   \item Compléter ce patron de rapport en supprimant toutes les phrases en italique\,: elles ne doivent pas apparaître dans le rapport pdf.
-   \item Il sera attribué {\bf 1 point} pour la qualité globale du rapport\,: présentation, concision et clarté de l'argumentation.
-\end{itemize}
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Principe de notre  programme (1 point)}
 {\em Mettre ici une explication brève du principe de votre programme en  précisant la méthode implantée (récursive, itérative) et les
 choix effectués (notamment pour l'ordonnancement des instructions).
 } 
+Notre programme est récursif donc l'implémentation des équations de Bellman elles-mêmes récursives a été directe.
+2 optimisations sont présentes :
+\begin{itemize}
+\item[\underline{précalcul de la somme des fréquences :}] pour éviter de faire une somme de fréquences à chaque appel de la fonction récursive nous avons stocké les fréquences sour forme cumulée afin de se ramener à une seule différence lors du calcul de la somme
+\item[\underline{bornes de recherche :}] au lieu de faire varier l'indice de recherche \textbf{k} du minimum sur tout l'intervalle \textbf{[i, j]}, nous avons restreint la recherche à l'intervalle [racine(i, j-1), racine(i+1, j)].
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Analyse du coût théorique (2 points)}
@@ -66,47 +66,37 @@ choix effectués (notamment pour l'ordonnancement des instructions).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Compte rendu d'expérimentation (2 points)}
   \subsection{Conditions expérimentaless}
-     {\em Décrire les conditions permettant la reproductibilité des mesures: on demande la description
-      de la machine et la méthode utilisée pour mesurer le temps.
-     }
 
     \subsubsection{Description synthétique de la machine\,:} 
-      {\em indiquer ici le  processeur et sa fréquence, la mémoire, le système d'exploitation. 
-       Préciser aussi si la machine était monopolisée pour un test, ou notamment si 
-       d'autres processus ou utilisateurs étaient en cours d'exécution. 
-      } 
+	La machine utilisée pour les tests possède un Intel Celeron 2955u à 1.4GHz. Elle tourne sous GalliumOS 2.1 (basé sur Xubuntu). Elle possède 4Go de DDR3 à 1600MHz. \\
+	La machine était monopolisée pour les tests.
 
     \subsubsection{Méthode utilisée pour les mesures de temps\,: } 
-      {\em préciser ici  comment les mesures de temps ont été effectuées (fonction appelée) et l'unité de temps; en particulier, 
-       préciser comment les 5 exécutions pour chaque test ont été faites (par exemple si le même test est fait 5 fois de suite, ou si les tests sont alternés entre
-       les mesures, ou exécutés en concurrence etc). 
-      }
+    Les tests ont été lancé par la commande "make test" qui appelle un script qui lance les benchmarks de manière séquentielle (benchmark1 puis benchmark 2 ...).
+    La commande a été utilisé 5 fois d'affilée pour les mesures.
 
   \subsection{Mesures expérimentales}
-    {\em Compléter le tableau suivant par les temps d'exécution mesurés pour chacun des 6 benchmarks imposés
-              (temps minimum, maximum et moyen sur 5 exécutions)
-    }
 
     \begin{figure}[h]
       \begin{center}
         \begin{tabular}{|l||r||r|r|r||}
           \hline
           \hline
-            & coût         & temps     & temps   & temps \\
-            & du patch     & min       & max     & moyen \\
+            & temps     & temps   & temps \\
+            & min (s)   & max (s) & moyen (s)\\
           \hline
           \hline
-            benchmark1 &      &     &     &     \\
+            benchmark1 & 0.000017 & 0.000021 & 0.000019 \\
           \hline
-            benchmark2 &      &     &     &     \\
+            benchmark2 & 0.000023 & 0.000034 & 0.000027 \\
           \hline
-            benchmark3 &      &     &     &     \\
+            benchmark3 & 0.061833 & 0.062367 & 0.062062 \\
           \hline
-            benchmark4 &      &     &     &     \\
+            benchmark4 & 0.285534 & 0.286234 & 0.285952 \\
           \hline
-            benchmark5 &      &     &     &     \\
+            benchmark5 & 0.673821 & 0.680874 & 0.676686 \\
           \hline
-            benchmark6 &      &     &     &     \\
+            benchmark6 & 2.008140 & 2.030586 & 2.019177 \\
           \hline
           \hline
         \end{tabular}
