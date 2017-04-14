@@ -26,7 +26,6 @@
  * \param rTab  roots
  * \returns { average depth of the tree }
  */
-i
 long pArbre(long i, long j, long *freqAddTab, long **pTab, long **rTab) {
     long k, km, pm, p, start, end;
 
