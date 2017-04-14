@@ -16,6 +16,17 @@
 #include <string.h>
 
 
+/**
+ * pArbre function
+ * \brief calculates the optimal tree
+ * \param i  starting index of the tree
+ * \param j  end index of the tree
+ * \param freqAddTab  cumulative frequencies
+ * \param pTab  average depths
+ * \param rTab  roots
+ * \returns { average depth of the tree }
+ */
+i
 long pArbre(long i, long j, long *freqAddTab, long **pTab, long **rTab) {
     long k, km, pm, p, start, end;
 
