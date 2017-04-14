@@ -17,8 +17,8 @@
 #include <time.h>
 
 struct noeud {
-    long rg;
-    long rd;
+    long rg; // fils gauche
+    long rd; // fils droit
 };
 
 typedef struct noeud NOEUD;
@@ -47,6 +47,7 @@ long pArbre(long i, long j, long *freqAddTab, long **pTab, long **rTab) {
     if (i != j) {
 	pm = -1;
 
+	// restriction des bornes de recherche
 	if (rTab[i][j-1] == -1)
 	    start = i;
 	else 

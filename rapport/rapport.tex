@@ -31,34 +31,27 @@ GROZ Irénée
 \section{Principe de notre  programme (1 point)}
 Notre programme est récursif donc l'implémentation des équations de Bellman elles-mêmes récursives a été directe.
 Plusieurs optimisations sont présentes :
+
 \begin{itemize}
 \item[\underline{précalcul de la somme des fréquences :}] pour éviter de faire une somme de fréquences à chaque appel de la fonction récursive nous avons stocké les fréquences sour forme cumulée afin de se ramener à une seule différence lors du calcul de la somme
 \item[\underline{mémoïsation}] les profondeurs moyennes sont stockées dans une matrice pour éviter de refaire certains calculs intermédiaires un grand nombre de fois
 \item[\underline{bornes de recherche :}] au lieu de faire varier l'indice de recherche \textbf{k} du minimum sur tout l'intervalle \textbf{[i, j]}, nous avons restreint la recherche à l'intervalle \textbf{[racine(i, j-1), racine(i+1, j)]}.
 \end{itemize}
 
+
+\textbf{Remarque :} Notre programme produit des arbres différents de ceux donnés en références pour les benchmarks 2 et 3 mais la profondeur moyenne est égale à ceux des références. Ce comportement vient sûrement du fait que les arbres optimaux ne sont pas uniques.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Analyse du coût théorique (2 points)}
-{\em Donner ici l'analyse du coût théorique de votre programme en fonction du nombre $n$ d'éléments dans le dictionnaire.
- Pour chaque coût, donner la formule qui le caractérise (en justifiant brièvement pourquoi cette formule correspond à votre programme), 
- puis l'ordre du coût en fonction de $n$ en notation $\Theta$ de préférence, sinon $O$.}
 
   \subsection{Nombre  d'opérations en pire cas\,: }
-    \paragraph{Justification\,: }
-    {\em La justification peut être par exemple de la forme: \\ 
-       "Le programme itératif contient les boucles $k_1=...$, $k_2= ...$ etc correspondant à la somme 
-      $$T(n_1, n_2, c_1, c_2) = \sum_{k_1=...}^{...} ... \sum ... + \sum_{i=...}^{...} ...$$ 
-      somme que nous avons calculée (ou majorée) par la technique de  ... " \\
-      ou  encore\,:  \\
-      "les appels récursifs du programme permettent de modéliser son coût par le système d'équations aux récurrences 
-      $$T(k_1, k_2) = ...  \mbox{~avec~les~conditions~initiales~....~} $$
-      Le coût indiqué est obtenu en résolvant ce système par la méthode de  .... "
-    } 
+    \paragraph{Justification\,: } La fonction \emph{pArbre} peut générer \textbf{$2 \times (racine(i+1, j) - racine(i, j-1))$} appels récursifs à chaque passage.
+    
   \subsection{Place mémoire requise\,: $O(n^2)$}
     \paragraph{Justification\,: } Les allocations mémoires nécessaires sont en $O(n)$ pour le tableau des fréquences cumulées et en $O(n^2)$ pour les matrices de racines et des profondeurs.
 
   \subsection{Nombre de défauts de cache sur le modèle CO\,: }
-    \paragraph{Justification\,: }
+    \paragraph{Justification\,: } Les défauts de cache surviennent lors des accès aux matrices de stockage des profondeurs et des racines dans les appels récursifs de la fonction \emph{pArbre}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,9 +99,6 @@ Plusieurs optimisations sont présentes :
     \end{figure}
 
 \subsection{Analyse des résultats expérimentaux}
-{\em Donner  une réponse justifiée  à la question\,: 
-              les  temps mesurés correspondent ils  à votre analyse théorique (nombre d’opérations et défauts de cache) ?
-}
 Par une régression quadratique sur les résultats expérimentaux on vérifie que le temps moyen est en $O(n^2)$.
 
 \end{document}
