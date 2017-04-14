@@ -16,6 +16,13 @@
 #include <string.h>
 #include <time.h>
 
+struct noeud {
+    long rg;
+    long rd;
+};
+
+typedef struct noeud NOEUD;
+typedef NOEUD* ARBRE;
 
 /**
  * pArbre function
@@ -77,6 +84,52 @@ long pArbre(long i, long j, long *freqAddTab, long **pTab, long **rTab) {
 }
 
 /**
+ * reconstruitArbre function
+ * \brief create tree structure
+ * \param i starting index of the tree
+ * \param j end index of the tree
+ * \param rTab  roots
+ * \param a tree structure
+ * \returns {}
+ */
+void reconstruitArbre(long i, long j, long **rTab, ARBRE a) {
+    long root = rTab[i][j], rg = -1, rd = -1;
+
+    root = rTab[i][j];
+
+    if (root != i) {
+        rg = rTab[i][root-1];
+        reconstruitArbre(i, root-1, rTab, a);
+    }
+
+    if (root != j) {
+        rd = rTab[root+1][j];
+        reconstruitArbre(root+1, j, rTab, a);
+    }
+
+    (a+root)->rg = rg;
+    (a+root)->rd = rd;
+}
+
+/**
+ * afficheArbre function
+ * \brief print tree structure
+ * \param n number of elements
+ * \param a tree structure
+ * \returns {}
+ */
+void afficheArbre(long n, ARBRE a) {
+    long i;
+
+    printf("static int BSTtree[%ld][2] = {\n", n);
+    for (i = 0; i < n-1; ++i) {
+	printf("{%ld, %ld}, \n", (a+i)->rg, (a+i)->rd);
+    }
+    printf("{%ld, %ld} };\n", (a+i)->rg, (a+i)->rd);
+}
+
+
+/**
  * Main function
  * \brief Main function
  * \param argc  A count of the number of command-line arguments
@@ -93,6 +146,7 @@ int main (int argc, char *argv[]) {
   long freqSum, freqTmp;
   long *freqAddTab;
   long **pTab, **rTab;
+  ARBRE a;
   
   if(argc != 3){
     fprintf(stderr, "!!!!! Usage: ./compileBST n  originalFile !!!!!\n");
@@ -180,10 +234,16 @@ int main (int argc, char *argv[]) {
       for(j=0; j<n; j++)
 	  rTab[i][j] = -1;
 
+  a = malloc(n*sizeof(*a));
+
   start = clock();
 
   printf("static long BSTdepth = %ld; // pour info. Non demandé\n", pArbre(0, n-1, freqAddTab, pTab, rTab));
   printf("static int BSTroot = %ld;\n", rTab[0][n-1]);
+
+  reconstruitArbre(0, n-1, rTab, a);
+  afficheArbre(n, a);
+
 
 /*
   printf("\nAffichage des profondeurs moyennes :\n");
@@ -203,13 +263,14 @@ int main (int argc, char *argv[]) {
 
   stop = clock();
   duration = (double)(stop - start) / CLOCKS_PER_SEC;
-  printf( "%3.6f secondes\n", duration );
+  fprintf(stderr, "%3.6f secondes\n", duration);
 
   free(*pTab);
   free(pTab);
   free(*rTab);
   free(rTab);
   free(freqAddTab);
+  free(a);
 
   return 0;
 }
