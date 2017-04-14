@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <assert.h>
 #include <string.h>
+#include <time.h>
 
 
 /**
@@ -86,6 +87,8 @@ long pArbre(long i, long j, long *freqAddTab, long **pTab, long **rTab) {
 int main (int argc, char *argv[]) {
   long n = 0 ; // Number of elements in the dictionary
   FILE *freqFile = NULL ; // File that contains n positive integers defining the relative frequence of dictinary elements 
+  clock_t start, stop;
+  double duration;
   long i, j;
   long freqSum, freqTmp;
   long *freqAddTab;
@@ -177,6 +180,7 @@ int main (int argc, char *argv[]) {
       for(j=0; j<n; j++)
 	  rTab[i][j] = -1;
 
+  start = clock();
 
   printf("static long BSTdepth = %ld; // pour info. Non demandé\n", pArbre(0, n-1, freqAddTab, pTab, rTab));
   printf("static int BSTroot = %ld;\n", rTab[0][n-1]);
@@ -196,6 +200,10 @@ int main (int argc, char *argv[]) {
       printf("\n");
   }
 */
+
+  stop = clock();
+  duration = (double)(stop - start) / CLOCKS_PER_SEC;
+  printf( "%3.6f secondes\n", duration );
 
   free(*pTab);
   free(pTab);
